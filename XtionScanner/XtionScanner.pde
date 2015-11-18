@@ -1,4 +1,4 @@
-PVector[][] cloud;  //point cloud
+PointCloud cloud;  //point cloud
 
 void setup()
 {
@@ -23,8 +23,8 @@ void setup()
   translate(width/2, height/2, 0);
   rotateZ(PI);
   drawCloud(cloud);
-  ArrayList<Point2D> contour = FindContour(cloud);
-  //drawContour(cloud, contour);
-  AdvanceSmooth(cloud, contour);
+  FindContour(cloud);
+  drawContour(cloud);
+  //AdvanceSmooth(cloud, contour);
   endShape();
 }

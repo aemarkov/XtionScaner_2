@@ -1,7 +1,7 @@
-public PVector[][] Load(String filename)
+public PointCloud Load(String filename)
 {
    //reading cloud from file
-  PVector[][] cloud = new PVector[480][640];
+  PointCloud cloud = new PointCloud(640,480);
   BufferedReader r = createReader(filename);
   String line;
   
@@ -21,8 +21,8 @@ public PVector[][] Load(String filename)
           float yc = Float.parseFloat(coords[1])*1000;
           float zc = Float.parseFloat(coords[2])*1000-500;
           
-          //need to fix coords
-          cloud[479-y][639-x]=new PVector(xc, yc, zc);
+          //need to fix coords (????)
+          cloud.SetPoint(639-x, 479-y,new PVector(xc, yc, zc));
         }
       }
       y++;

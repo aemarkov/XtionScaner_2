@@ -14,20 +14,19 @@
    - внутри
 4. Продолжаем так двигаться, пока не обойдем весь контур*/ 
 
-public ArrayList<Point2D> FindContour(PVector[][] cloud)
+public void FindContour(PointCloud cloud)
 { 
   Point2D curP = new Point2D();                          //Текущая точка 
-  ArrayList<Point2D> contour = new ArrayList<Point2D>(); //Список индексов точек, принадлежащих контуру
   
   //Ищем первую существующую точку
   println("Searching for first non-nan point...");
   
   boolean isFound=false;
-  for(curP.y = 0; curP.y<cloud.length && !isFound; curP.y++)
+  for(curP.y = 0; curP.y<cloud.Height() && !isFound; curP.y++)
     {
-      for(curP.x=0; curP.x<cloud[curP.y].length; curP.x++)
+      for(curP.x=0; curP.x<cloud.Width(); curP.x++)
       {
-        PVector p = cloud[curP.y][curP.x];
+        PVector p = cloud.GetPoint(curP.x,curP.y);
         if(p!=null)
         {
           isFound=true;
@@ -53,7 +52,7 @@ public ArrayList<Point2D> FindContour(PVector[][] cloud)
   Direction direction = new Direction(2);
   
   //Первый сдвиг (без него цикл завершиться на первой итерации)
-  contour.add(new Point2D(curP));
+  cloud.AddContourPoint(new Point2D(curP));
   curP.Move(direction);
   
   //Движемся вдоль контура
@@ -61,16 +60,14 @@ public ArrayList<Point2D> FindContour(PVector[][] cloud)
   while((curP.x!=start.x)||(curP.y!=start.y))
   {
     //Выбираем очередную точку и добавляем ее в контур
-    PVector v1 = cloud[curP.y][curP.x];
+    PVector v1 = cloud.GetPoint(curP.x, curP.y);
     if(v1!=null)
-      contour.add(new Point2D(curP));
+      cloud.AddContourPoint(new Point2D(curP));
     
     //Перехордим к следующей точке
     curP.Move(direction);
     direction=findClosestPoint(curP, cloud, direction);
   }
-  
-  return contour;
 }
 
 //Ищем направление, которое направлено
@@ -84,7 +81,7 @@ x - точка
     xxxxxxx
     Выбираем направление ВВЕРХ
 */
-Direction findClosestPoint(Point2D curP, PVector[][] cloud, Direction direction)
+Direction findClosestPoint(Point2D curP, PointCloud cloud, Direction direction)
 {
   
   //Поочередно проверяем разные углы
@@ -107,10 +104,9 @@ Direction findClosestPoint(Point2D curP, PVector[][] cloud, Direction direction)
 }
 
 //Проверяем, существует ли точка в нужном направлении движения
-boolean isPoint(Point2D curP, PVector[][] cloud, Direction direction)
+boolean isPoint(Point2D curP, PointCloud cloud, Direction direction)
 {
   Point2D p = curP.CopyMove(direction);
-  PVector f = cloud[p.x][p.y];
-  //println("Direction = ",direction.direction, "X = ", p.x, "Y = ",p.y, f!=null);
-  return cloud[p.y][p.x]!=null;
+  PVector f = cloud.GetPoint(p.x,p.y);
+  return cloud.GetPoint(p.x, p.y)!=null;
 }

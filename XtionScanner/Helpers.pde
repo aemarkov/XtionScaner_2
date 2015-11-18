@@ -10,13 +10,13 @@ boolean isNan(String[] coords)
 }
 
 //Отображает облако точек
-void drawCloud(PVector[][] cloud)
+void drawCloud(PointCloud cloud)
 {
-  for(int y = 0; y<cloud.length; y++)
+  for(int y = 0; y<cloud.Height(); y++)
   {
-    for(int x=0; x<cloud[y].length; x++)
+    for(int x=0; x<cloud.Width(); x++)
     {
-      PVector p = cloud[y][x];
+      PVector p = cloud.GetPoint(x,y);
       if(p!=null)
         point(p.x, p.y, p.z);
     }
@@ -41,37 +41,16 @@ void drawPoint(Point2D p)
 }
 
 //РИСУЕТ КОНТУР
-void drawContour(PVector[][] cloud, ArrayList<Point2D> contour)
+void drawContour(PointCloud cloud)
 {
   stroke(255,0,0);
   PVector v1;
   PVector v2;
-  Point2D p;
     
-  for(int i = 0 ;i<contour.size()-1; i++)
+  for(int i = 0 ;i<cloud.ContourSize()-1; i++)
   {
-    p=contour.get(i);
-    v1=cloud[p.y][p.x];
-    p=contour.get(i+1);
-    v2=cloud[p.y][p.x];
-    
-    //if(v1!=null && v2!=null)
-      line(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+    v1=cloud.GetPointFromContour(i);
+    v2=cloud.GetPointFromContour(i+1);
+    line(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
   }
-}
-
-//Возвращает точку из контура, словно контур является
-//кольцевым буфером
-//[-1] = N-1  (последняя)
-//[0] =  0
-//...
-//[N-1] = N-1 (перввая)
-//[N] =   0   (последняя)
-Point2D getPoint(ArrayList<Point2D> contour, int index)
-{
-  if(index<0) 
-    index=contour.size()+index;
-  else if(index>=contour.size())
-    index=index-contour.size();
-  return contour.get(index);
 }

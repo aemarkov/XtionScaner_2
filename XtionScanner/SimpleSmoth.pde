@@ -2,7 +2,7 @@
  * Просто усредняет несколько точек.
  * Не лучший результат
  */
-void SimpleSmooth(PVector[][] cloud,ArrayList<Point2D> contour)
+void SimpleSmooth(PointCloud cloud)
 {
   stroke(0,255,0);
   
@@ -10,12 +10,12 @@ void SimpleSmooth(PVector[][] cloud,ArrayList<Point2D> contour)
   ArrayList<PVector> list=new ArrayList<PVector>();
   int n=50;  //number of averaging points
   
-  for(int i=-n; i<contour.size(); i++)
+  for(int i=-n; i<cloud.ContourSize(); i++)
   {
     //Add point to the list
     //Keep number of points is N
-    Point2D p = getPoint(contour,i);
-    list.add(cloud[p.y][p.x]);
+    Point2D p = cloud.GetContourPointCycle(i);
+    list.add(cloud.GetPoint(p));
     if(list.size()>n)
       list.remove(0);
     
