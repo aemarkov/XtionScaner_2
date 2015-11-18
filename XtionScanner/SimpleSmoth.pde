@@ -1,5 +1,7 @@
-//Simple smooth algorythm. Just calc average position of 
-//previous N points
+/* ПРОСТОЕ СГЛАЖИВАНИЕ
+ * Просто усредняет несколько точек.
+ * Не лучший результат
+ */
 void SimpleSmooth(PVector[][] cloud,ArrayList<Point2D> contour)
 {
   stroke(0,255,0);

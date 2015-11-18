@@ -9,7 +9,7 @@ void setup()
   stroke(255);
   noFill();
  
-  cloud=Load("cloud.proc");
+  cloud=Load("..\\Data\\cloud.proc");
  
   //Draw
   ortho(-width/20, width/20, -height/20, height/20);

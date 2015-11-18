@@ -1,11 +1,15 @@
-//check is point nan
+/*-------------------------------------------------------
+ *               ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ
+ *-----------------------------------------------------*/
+
+//Проверяет, что координаты в стркоовом представлении являются NaN
 boolean isNan(String[] coords)
 {
   if(coords.length!=3)return true;
   return coords[0].equals("nan") && coords[1].equals("nan") && coords[2].equals("nan");    
 }
 
-//draw cloud
+//Отображает облако точек
 void drawCloud(PVector[][] cloud)
 {
   for(int y = 0; y<cloud.length; y++)
@@ -13,18 +17,15 @@ void drawCloud(PVector[][] cloud)
     for(int x=0; x<cloud[y].length; x++)
     {
       PVector p = cloud[y][x];
-      /*if(p!=null)
-        stroke(255);
-      else
-        stroke(100);
-      drawPoint(x, y);*/
       if(p!=null)
         point(p.x, p.y, p.z);
     }
   }
 }
 
-//Drawing point by it INDEX
+//Рисует точку ПО ИНДЕКСУ
+//т.е рисует точку массива
+//ВНИМАНЕ. ВРЕМЕННЫЙ МЕТОД - ЧИСЛА ПОДОБРАНЫ
 void drawPoint(int x, int y)
 {
   //point(x*5-1300, y*5-400);
@@ -32,12 +33,14 @@ void drawPoint(int x, int y)
   point(x*3-600, y*3-300, 0);
 }
 
+//Рисует точку ПО ИНДЕКСУ
+//(все аналогично)
 void drawPoint(Point2D p)
 {
   drawPoint(p.x, p.y);
 }
 
-//Drawing contour
+//РИСУЕТ КОНТУР
 void drawContour(PVector[][] cloud, ArrayList<Point2D> contour)
 {
   stroke(255,0,0);
@@ -57,12 +60,13 @@ void drawContour(PVector[][] cloud, ArrayList<Point2D> contour)
   }
 }
 
-//Get point like contour is cycle buffer 
-//[-1] = N-1  (last)
+//Возвращает точку из контура, словно контур является
+//кольцевым буфером
+//[-1] = N-1  (последняя)
 //[0] =  0
 //...
-//[N-1] = N-1 (last)
-//[N] =   0   (first)
+//[N-1] = N-1 (перввая)
+//[N] =   0   (последняя)
 Point2D getPoint(ArrayList<Point2D> contour, int index)
 {
   if(index<0) 
