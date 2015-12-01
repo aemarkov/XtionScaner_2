@@ -43,7 +43,6 @@ void drawPoint(Point2D p)
 //РИСУЕТ КОНТУР
 void drawContour(PointCloud cloud)
 {
-  stroke(255, 0, 0);
   PVector v1;
   PVector v2;
 
