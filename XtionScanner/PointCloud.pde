@@ -47,7 +47,7 @@ class PointCloud
   private ArrayList<Point2D> contour; 
 
   //Создает облако точек заданного размера
-  PointCloud(int w, int h)
+  public PointCloud(int w, int h)
   {
     this.w = w; //<>//
     this.h = h;
@@ -132,13 +132,13 @@ class PointCloud
   ///////////////////////////////////////////////////////////////////////////////////////
   ///     ПОЛУЧЕНИЕ РАЗМЕРОВ
   ///////////////////////////////////////////////////////////////////////////////////////
-  int Height() {
+  public int Height() {
     return h;
   }
-  int Width() {
+  public int Width() {
     return w;
   }
-  Point2D Size() {
+  public Point2D Size() {
     return new Point2D(w, h);
   }
 
@@ -148,25 +148,68 @@ class PointCloud
   ///////////////////////////////////////////////////////////////////////////////////////
 
   //Получение точки облака
-  PVector GetPoint(int x, int y)
+  public PVector GetPoint(int x, int y)
   {
     return point_cloud[y][x];
   }
 
-  PVector GetPoint(Point2D p)
+  public PVector GetPoint(Point2D p)
   {
     return point_cloud[p.y][p.x];
   }
 
   //Задание точки облака
-  void SetPoint(int x, int y, PVector value)
+  public void SetPoint(int x, int y, PVector value)
   {
     point_cloud[y][x]=value;
   }
 
-  void SetPoint(Point2D p, PVector value)
+  public void SetPoint(Point2D p, PVector value)
   {
     point_cloud[p.y][p.x]=value;
+  }
+
+  //Сглаживание
+  public PointCloud Smooth(int size)
+  {
+    PointCloud sCloud = new PointCloud(w, h);
+
+    for (int y = 0; y<h; y++)
+    {
+      for (int x = 0; x<w; x++)
+      {
+        PVector v;
+        v=GetPoint(x, y);
+        if (v!=null)
+        {
+
+          int n = 0;
+          PVector sum = new PVector();
+
+          for (int x1=max(0, x-size/2); x1<min(w, x+size/2); x1++)
+          {
+            for (int y1 = max(0, y-size/2); y1<min(h, y+size/2); y1++)
+            {
+              v = GetPoint(x1, y1);
+              if (v!=null)
+              {
+                sum.add(v);
+                n++;
+              }
+            }
+          }
+
+
+          if ((sum.x!=Double.NaN)&&(sum.y!=Double.NaN)&&(sum.z!=Double.NaN))
+          {
+            sum.div(n);
+            sCloud.SetPoint(x, y, sum);
+          }
+        }
+      }
+    }
+
+    return sCloud;
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////
@@ -174,29 +217,29 @@ class PointCloud
   ///////////////////////////////////////////////////////////////////////////////////////
 
   //Добавляет точку в контур
-  void AddContourPoint(int x, int y)
+  public void AddContourPoint(int x, int y)
   {
     contour.add(new Point2D(x, y));
   }
 
-  void AddContourPoint(Point2D p)
+  public void AddContourPoint(Point2D p)
   {
     contour.add(p);
   }
 
   //Возвращает размер контура
-  int ContourSize() {
+  public int ContourSize() {
     return contour.size();
   }
 
   //Возвращает ИНДЕКСЫ точки из контура 
-  Point2D GetContourPoint(int index)
+  public Point2D GetContourPoint(int index)
   {
     return contour.get(index);
   }
 
   //Возвращает 3D КООРДИНАТЫ точки из контура
-  PVector GetPointFromContour(int index)
+  public PVector GetPointFromContour(int index)
   {
     Point2D p = contour.get(index);
     return point_cloud[p.y][p.x];
@@ -209,7 +252,7 @@ class PointCloud
   //...
   //[N-1] = N-1 (перввая)
   //[N] =   0   (последняя)
-  Point2D GetContourPointCycle(int index)
+  public Point2D GetContourPointCycle(int index)
   {
     if (index<0) 
       index=contour.size()+index;

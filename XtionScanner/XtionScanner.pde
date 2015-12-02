@@ -13,47 +13,7 @@ void setup()
   size(800, 800, P3D);
 
   cloud=new PointCloud("..\\Data\\cloud.OCF"); //<>//
-  println(cloud.Width(), cloud.Height());  
-
-
-  sCloud = new PointCloud(cloud.Width(), cloud.Height());
-
-  //Сглаживание
-  int size = 20;
-  for (int y = 0; y<cloud.Height(); y++)
-  {
-    for (int x = 0; x<cloud.Width(); x++)
-    {
-      PVector v;
-      v=cloud.GetPoint(x, y);
-      if (v!=null)
-      {
-
-        int n = 0;
-        PVector sum = new PVector();
-
-        for (int x1=max(0, x-size/2); x1<min(cloud.Width(), x+size/2); x1++)
-        {
-          for (int y1 = max(0, y-size/2); y1<min(cloud.Height(), y+size/2); y1++)
-          {
-            v = cloud.GetPoint(x1, y1);
-            if (v!=null)
-            {
-              sum.add(v);
-              n++;
-            }
-          }
-        }
-
-
-        if ((sum.x!=Double.NaN)&&(sum.y!=Double.NaN)&&(sum.z!=Double.NaN))
-        {
-          sum.div(n);
-          sCloud.SetPoint(x, y, sum);
-        }
-      }
-    }
-  }
+  sCloud = cloud.Smooth(20);
 
   //Setup PeasyCam (for rotation)
   PeasyCam cam = new PeasyCam(this, 200);
