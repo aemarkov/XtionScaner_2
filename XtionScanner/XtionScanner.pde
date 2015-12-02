@@ -12,7 +12,10 @@ void setup()
   //General setup
   size(800, 800, P3D);
 
-  cloud=Load("..\\Data\\cloud.proc");
+  cloud=new PointCloud("..\\Data\\cloud.OCF"); //<>//
+  println(cloud.Width(), cloud.Height());  
+
+
   sCloud = new PointCloud(cloud.Width(), cloud.Height());
 
   //Сглаживание
@@ -68,7 +71,7 @@ void setup()
 
 void draw()
 {
-  background(0);
+  background(0); //<>//
   scale(3, 3, 3);
   pointLight(255, 255, 255, width/2, height/2, 400);
   pointLight(255, 255, 255, width/2, height/2, -400);
