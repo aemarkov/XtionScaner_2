@@ -46,6 +46,11 @@ class PointCloud
   //и не имеет смысла без облака
   private ArrayList<Point2D> contour; 
 
+
+  ///////////////////////////////////////////////////////////////////////////////////////
+  ///     КОНСТРУКТОРЫ
+  ///////////////////////////////////////////////////////////////////////////////////////
+
   //Создает облако точек заданного размера
   public PointCloud(int w, int h)
   {
@@ -59,6 +64,7 @@ class PointCloud
   //Создает облако точек из файла
   public PointCloud(String filename)
   {
+    contour=new ArrayList<Point2D>();
     BufferedReader r = createReader(filename); //<>//
     String line;
 
@@ -178,33 +184,34 @@ class PointCloud
     {
       for (int x = 0; x<w; x++)
       {
-        PVector v;
+        PVector v, v2;
+
         v=GetPoint(x, y);
         if (v!=null)
         {
 
           int n = 0;
-          PVector sum = new PVector();
+          float z_sum=0;
 
           for (int x1=max(0, x-size/2); x1<min(w, x+size/2); x1++)
           {
             for (int y1 = max(0, y-size/2); y1<min(h, y+size/2); y1++)
             {
-              v = GetPoint(x1, y1);
-              if (v!=null)
+              v2 = GetPoint(x1, y1);
+              if (v2!=null)
               {
-                sum.add(v);
+                z_sum+=v2.z;
                 n++;
               }
             }
           }
 
 
-          if ((sum.x!=Double.NaN)&&(sum.y!=Double.NaN)&&(sum.z!=Double.NaN))
-          {
-            sum.div(n);
-            sCloud.SetPoint(x, y, sum);
-          }
+          //if (z_sum!=Double.NaN)
+          //{
+            z_sum/=n;
+            sCloud.SetPoint(x, y, new PVector(v.x,v.y,z_sum));
+          //}
         }
       }
     }

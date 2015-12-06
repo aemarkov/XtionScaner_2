@@ -4,7 +4,6 @@
  */
 void SimpleSmooth(PointCloud cloud)
 {
-  stroke(0, 255, 0);
 
   //Averaging list
   ArrayList<PVector> list=new ArrayList<PVector>();
@@ -18,12 +17,13 @@ void SimpleSmooth(PointCloud cloud)
     list.add(cloud.GetPoint(p));
     if (list.size()>n)
       list.remove(0);
-
+ 
     //Drawing points
     if (i>0)
     {
       PVector av = average(list);
       point(av.x, av.y, av.z);
+
     }
   }
 }

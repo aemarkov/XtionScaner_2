@@ -12,7 +12,7 @@ void setup()
   //General setup
   size(800, 800, P3D);
 
-  cloud=new PointCloud("..\\Data\\cloud.OCF"); //<>//
+  cloud=new PointCloud("..\\Data\\cloud.OCF"); //<>// //<>// //<>//
   sCloud = cloud.Smooth(20);
 
 
@@ -21,13 +21,13 @@ void setup()
   cam.setMinimumDistance(0.000);
   cam.setMaximumDistance(5000);
 
-  noStroke();
-
   FindContour(sCloud);
-  m = new Mesh(sCloud.Width(), sCloud.Height());
-  m.AddLayer(sCloud);
+ 
 
-  make_model(m, 3);
+  //Построение меша
+  /*m = new Mesh(sCloud.Width(), sCloud.Height());
+  m.AddLayer(sCloud);
+  make_model(m, 3);*/
 }
 
 
@@ -73,12 +73,26 @@ void make_model(Mesh m, float width)
 
 void draw()
 {
-  background(0); //<>//
+  //canea and light setup //<>//
+  background(0); //<>// //<>//
   scale(3, 3, 3);
   pointLight(255, 255, 255, width/2, height/2, 400);
   pointLight(255, 255, 255, width/2, height/2, -400);
-  noStroke();
-  m.Draw();
-  stroke(255, 0, 0);
-  //drawContour(sCloud);
+
+  //Отображение меша
+  //noStroke();
+  //m.Draw();
+  
+  //Отображение облака
+  stroke(255);
+  strokeWeight(1);
+  drawCloud(sCloud);
+
+  //Отображение контура
+  stroke(0,255,0);
+  drawContour(sCloud);
+  
+  stroke(255,0,0); 
+  strokeWeight(5);
+  SimpleSmooth(sCloud);
 }

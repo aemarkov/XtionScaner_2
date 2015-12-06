@@ -30,7 +30,7 @@ void drawPoint(int x, int y)
 {
   //point(x*5-1300, y*5-400);
   //point(x*3-600, y*3-300);
-  point(x*3-600, y*3-300, 0);
+  point(x, y);
 }
 
 //Рисует точку ПО ИНДЕКСУ
