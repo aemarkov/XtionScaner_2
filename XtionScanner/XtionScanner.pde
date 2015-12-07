@@ -5,6 +5,7 @@ import peasy.test.*;
 
 PointCloud cloud;  //point cloud
 PointCloud sCloud;
+PointCloud cloudWithSmoothedContour;
 Mesh m;
 
 void setup()
@@ -12,9 +13,8 @@ void setup()
   //General setup
   size(800, 800, P3D);
 
-  cloud=new PointCloud("..\\Data\\cloud.OCF"); //<>// //<>// //<>//
+  cloud=new PointCloud("..\\Data\\cloud.OCF"); //<>// //<>// //<>// //<>// //<>//
   sCloud = cloud.Smooth(20);
-
 
     //Setup PeasyCam (for rotation)
   PeasyCam cam = new PeasyCam(this, 200);
@@ -22,12 +22,20 @@ void setup()
   cam.setMaximumDistance(5000);
 
   FindContour(sCloud);
- 
 
+  testHoleFiller();
   //Построение меша
   /*m = new Mesh(sCloud.Width(), sCloud.Height());
   m.AddLayer(sCloud);
   make_model(m, 3);*/
+}
+
+void testHoleFiller()
+{
+  //cloudWithSmoothedContour = new PointCloud(sCloud.Width(), sCloud.Height());
+  //HoleFiller(sCloud, cloudWithSmoothedContour); //<>//
+  //FillNewCloudWithOldCloud(sCloud, cloudWithSmoothedContour);
+  FindAndFillHoles(sCloud);
 }
 
 
@@ -47,7 +55,7 @@ void make_model(Mesh m, float width)
       {
         p2 = new PVector(p1.x, p1.y, p1.z-width);
         c2.SetPoint(x,y,p2);
-      } 
+      }
     }
   }
 
@@ -66,15 +74,15 @@ void make_model(Mesh m, float width)
     Point3D p_3 = new Point3D(p2.x, p2.y, 1);
     Point3D p_4 = new Point3D(p1.x, p1.y, 1);
 
-    m.AddPolygon(p_1, p_2, p_3, p_4);
-  }
+    m.AddPolygon(p_1, p_2, p_3, p_4); //<>//
+  } //<>//
 
-}
-
-void draw()
+} //<>//
+ //<>// //<>// //<>// //<>//
+void draw() //<>// //<>// //<>//
 {
-  //canea and light setup //<>//
-  background(0); //<>// //<>//
+  //canea and light setup //<>// //<>//
+  background(0); //<>// //<>// //<>//
   scale(3, 3, 3);
   pointLight(255, 255, 255, width/2, height/2, 400);
   pointLight(255, 255, 255, width/2, height/2, -400);
@@ -82,7 +90,7 @@ void draw()
   //Отображение меша
   //noStroke();
   //m.Draw();
-  
+
   //Отображение облака
   stroke(255);
   strokeWeight(1);
@@ -91,8 +99,8 @@ void draw()
   //Отображение контура
   stroke(0,255,0);
   drawContour(sCloud);
-  
-  stroke(255,0,0); 
-  strokeWeight(5);
-  SimpleSmooth(sCloud);
+
+  stroke(255,0,0);
+  //strokeWeight(5);
+  //SimpleSmooth(sCloud);
 }
