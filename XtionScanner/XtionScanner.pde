@@ -25,9 +25,9 @@ void setup()
  
 
   //Построение меша
-  /*m = new Mesh(sCloud.Width(), sCloud.Height());
+  m = new Mesh(sCloud.Width(), sCloud.Height());
   m.AddLayer(sCloud);
-  make_model(m, 3);*/
+  make_model(m, 3);
 }
 
 
@@ -80,19 +80,19 @@ void draw()
   pointLight(255, 255, 255, width/2, height/2, -400);
 
   //Отображение меша
-  //noStroke();
-  //m.Draw();
+  noStroke();
+  m.Draw();
   
   //Отображение облака
-  stroke(255);
-  strokeWeight(1);
-  drawCloud(sCloud);
+  //stroke(255);
+  //strokeWeight(1);
+  //drawCloud(sCloud);
 
   //Отображение контура
   stroke(0,255,0);
   drawContour(sCloud);
   
-  stroke(255,0,0); 
-  strokeWeight(5);
-  SimpleSmooth(sCloud);
+  //stroke(255,0,0); 
+  //strokeWeight(5);
+  //SimpleSmooth(sCloud);
 }
