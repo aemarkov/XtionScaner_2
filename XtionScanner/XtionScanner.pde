@@ -2,32 +2,94 @@ import peasy.*;
 import peasy.org.apache.commons.math.*;
 import peasy.org.apache.commons.math.geometry.*;
 import peasy.test.*;
+import controlP5.*;
+import processing.opengl.*;
 
 PointCloud cloud;  //point cloud
-PointCloud sCloud;
-Mesh m;
+PointCloud sCloud; //smooth point cloud
+Mesh m;            //mesh
+Mesh sM;           //smooth mesh
+
+ControlP5 cp5;
+PeasyCam cam;
+
+boolean defaultCloud = true;
+boolean smoothCloud = false;
+
+boolean defaultContour = false;
+boolean smoothContour = false;
+
+boolean defaultMesh = false;
+boolean smoothMesh = false;
 
 void setup()
 {
   //General setup
   size(800, 800, P3D);
-
-  cloud=new PointCloud("..\\Data\\cloud.OCF"); //<>// //<>// //<>//
-  sCloud = cloud.Smooth(20);
-
-
-    //Setup PeasyCam (for rotation)
-  PeasyCam cam = new PeasyCam(this, 200);
+ //<>//
+  //Setup PeasyCam (for rotation)
+  cam = new PeasyCam(this, 200);
   cam.setMinimumDistance(0.000);
   cam.setMaximumDistance(5000);
 
+  //Получем облака
+  cloud=new PointCloud("..\\Data\\cloud.OCF");
+  sCloud = cloud.Smooth(20);
+  
+  //Находим контуры
+  FindContour(cloud);
   FindContour(sCloud);
  
 
   //Построение меша
-  m = new Mesh(sCloud.Width(), sCloud.Height());
-  m.AddLayer(sCloud);
-  make_model(m, 3);
+  m = new Mesh(cloud.Width(), cloud.Height());
+  m.AddLayer(cloud);
+  
+  sM = new Mesh(sCloud.Width(), sCloud.Height());
+  sM.AddLayer(sCloud);
+  
+  // create a toggle and change the default look to a (on/off) switch look
+  cp5 = new ControlP5(this);
+  cp5.addToggle("DefaultCloud")
+     .setPosition(10,10)
+     .setSize(50,20)
+     .setValue(true)
+     .setMode(ControlP5.SWITCH);
+     
+   cp5.addToggle("SmoothCloud")
+     .setPosition(10,50)
+     .setSize(50,20)
+     .setValue(false)
+     .setMode(ControlP5.SWITCH);
+   
+   cp5.addToggle("DefaultContour")
+     .setPosition(10,90)
+     .setSize(50,20)
+     .setValue(false)
+     .setMode(ControlP5.SWITCH);
+     
+   cp5.addToggle("SmoothContour")
+     .setPosition(10,130)
+     .setSize(50,20)
+     .setValue(false)
+     .setMode(ControlP5.SWITCH);
+     
+   cp5.addToggle("DefaultMesh")
+     .setPosition(10,170)
+     .setSize(50,20)
+     .setValue(false)
+     .setMode(ControlP5.SWITCH);
+     
+   cp5.addToggle("SmoothMesh")
+     .setPosition(10,210)
+     .setSize(50,20)
+     .setValue(false)
+     .setMode(ControlP5.SWITCH);
+     
+     
+  cp5.setAutoDraw(false);
+  
+  //make_model(m, 3);
 }
 
 
@@ -71,28 +133,102 @@ void make_model(Mesh m, float width)
 
 }
 
+
+
 void draw()
 {
   //canea and light setup //<>//
-  background(0); //<>// //<>//
+  background(0); //<>//
+  pushMatrix();
+  
   scale(3, 3, 3);
   pointLight(255, 255, 255, width/2, height/2, 400);
   pointLight(255, 255, 255, width/2, height/2, -400);
 
-  //Отображение меша
-  noStroke();
-  m.Draw();
-  
+ 
   //Отображение облака
-  //stroke(255);
-  //strokeWeight(1);
-  //drawCloud(sCloud);
+  if(defaultCloud)
+  {
+    stroke(255, 100, 100);
+    strokeWeight(1);
+    drawCloud(cloud);
+  }
+  
+  if(smoothCloud)
+  {
+    stroke(100, 255, 100);
+    strokeWeight(1);
+    drawCloud(sCloud);
+  }
+  
 
   //Отображение контура
-  stroke(0,255,0);
-  drawContour(sCloud);
+  if(defaultContour)
+  {
+    stroke(255,0,0);
+    //strokeWeight(5);
+    drawContour(cloud);
+  }
   
-  //stroke(255,0,0); 
-  //strokeWeight(5);
-  //SimpleSmooth(sCloud);
+  if(smoothContour)
+  {
+    stroke(0,255,0);
+//strokeWeight(5);
+    drawContour(sCloud);
+  }
+  
+  if(defaultMesh)
+  {
+     //Отображение меша
+      noStroke();
+      m.Draw();
+  }
+  
+  if(smoothMesh)
+  {
+     //Отображение меша
+      noStroke();
+      sM.Draw();
+  }
+  
+  popMatrix();
+  gui();
+}
+
+void gui() {
+  hint(DISABLE_DEPTH_TEST);
+  cam.beginHUD();
+  cp5.draw();
+  cam.endHUD();
+  hint(ENABLE_DEPTH_TEST);
+}
+
+void DefaultCloud(boolean theFlag)
+{
+  defaultCloud=theFlag;
+}
+
+void SmoothCloud(boolean theFlag)
+{
+  smoothCloud=theFlag;
+}
+
+void DefaultContour(boolean theFlag)
+{
+  defaultContour=theFlag;
+}
+
+void SmoothContour(boolean theFlag)
+{
+  smoothContour=theFlag;
+}
+
+void DefaultMesh(boolean theFlag)
+{
+  defaultMesh=theFlag;
+}
+
+void SmoothMesh(boolean theFlag)
+{
+  smoothMesh=theFlag;
 }
