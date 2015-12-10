@@ -28,7 +28,7 @@ void setup()
   size(800, 800, P3D);
  //<>//
   //Setup PeasyCam (for rotation)
-  cam = new PeasyCam(this, 200);
+  cam = new PeasyCam(this, 800);
   cam.setMinimumDistance(0.000);
   cam.setMaximumDistance(5000);
 
@@ -89,7 +89,7 @@ void setup()
      
   cp5.setAutoDraw(false);
   
-  //make_model(m, 3);
+  make_model(sM, 3);
 }
 
 
