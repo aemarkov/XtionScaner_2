@@ -9,6 +9,11 @@ boolean isNan(String[] coords)
   return coords[0].equals("nan") && coords[1].equals("nan") && coords[2].equals("nan");
 }
 
+boolean isNan(PVector point)
+{
+  return point == null; // && (Float.isNan(point.x.isNan) || Float.isNan(point.y.isNan) || Float.isNan(point.z.isNan));
+}
+
 //Отображает облако точек
 void drawCloud(PointCloud cloud)
 {
