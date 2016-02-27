@@ -8,13 +8,13 @@
   в соседних элементах хранятся соседние точки.
   Это упрощает работу
 
-  Помимо этого, этот класс содержит информацию 
+  Помимо этого, этот класс содержит информацию
   о контуре облака - точках на границе облака
 
 ФОРМАТ ФАЙЛА
   OCF (Organized Cloud File) - Формат файла для хранения организованного облкака точек
   Понятие организованного облака точек см. в PointCloud
-  
+
   Формат файла:
   [METADATA]
   VERSION=v
@@ -24,12 +24,12 @@
   x y z;x y z;x y z; ... x y z;
   x y z;x y z;x y z; ... x y z;
   x y z;x y z;x y z; ... x y z;
-  
+
   В начале файла идет служебная информация, которая начинается с [METADATA]
-  Здес содержиться 
+  Здес содержиться
    - номер версии (для распознования разных версий формата в дальнейшем)
    - ширина и высота облкак точек
-  
+
   Затем, начиная с [DATA] идут точки облака, разделенные точкой с запятой.
   1 строка файла - 1 стррока организованного облака*/
 
@@ -44,7 +44,7 @@ class PointCloud
   //Контур
   //Контур не выносится в отдельный класс, т.к он прост (просто список)
   //и не имеет смысла без облака
-  private ArrayList<Point2D> contour; 
+  private ArrayList<Point2D> contour;
 
 
   ///////////////////////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ class PointCloud
     String line;
 
     int v=-1, w=-1, h=-1;
-    
+
     try
     {
       //Читаем метаданные
@@ -123,7 +123,7 @@ class PointCloud
         }
         y++;
       }
-    
+
     }catch (IOException exp)
     {
     }
@@ -239,7 +239,7 @@ class PointCloud
     return contour.size();
   }
 
-  //Возвращает ИНДЕКСЫ точки из контура 
+  //Возвращает ИНДЕКСЫ точки из контура
   public Point2D GetContourPoint(int index)
   {
     return contour.get(index);
@@ -261,10 +261,15 @@ class PointCloud
   //[N] =   0   (последняя)
   public Point2D GetContourPointCycle(int index)
   {
-    if (index<0) 
+    if (index<0)
       index=contour.size()+index;
     else if (index>=contour.size())
       index=index-contour.size();
     return contour.get(index);
+  }
+
+  public ArrayList<Point2D> GetContour()
+  {
+    return new ArrayList<Point2D>(contour);
   }
 }

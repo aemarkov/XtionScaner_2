@@ -6,6 +6,7 @@ import controlP5.*;
 import processing.opengl.*;
 
 PointCloud cloud;  //point cloud
+
 PointCloud sCloud; //smooth point cloud
 Mesh m;            //mesh
 Mesh sM;           //smooth mesh
@@ -22,13 +23,15 @@ boolean smoothContour = false;
 boolean defaultMesh = false;
 boolean smoothMesh = false;
 
+
 void setup()
 {
   //General setup
   size(800, 800, P3D);
- //<>//
-  //Setup PeasyCam (for rotation)
+
+  //Настройки камеры
   cam = new PeasyCam(this, 800);
+
   cam.setMinimumDistance(0.000);
   cam.setMaximumDistance(5000);
 
@@ -39,7 +42,8 @@ void setup()
   //Находим контуры
   FindContour(cloud);
   FindContour(sCloud);
- 
+
+  testHoleFiller();
 
   //Построение меша
   m = new Mesh(cloud.Width(), cloud.Height());
@@ -48,7 +52,8 @@ void setup()
   sM = new Mesh(sCloud.Width(), sCloud.Height());
   sM.AddLayer(sCloud);
   
-  // create a toggle and change the default look to a (on/off) switch look
+  
+  //Создание кнопок
   cp5 = new ControlP5(this);
   cp5.addToggle("DefaultCloud")
      .setPosition(10,10)
@@ -92,6 +97,15 @@ void setup()
   make_model(sM, 3);
 }
 
+//Тестирование заполнения отверстий
+void testHoleFiller()
+{
+  //cloudWithSmoothedContour = new PointCloud(sCloud.Width(), sCloud.Height());
+  //HoleFiller(sCloud, cloudWithSmoothedContour); //<>//
+  //FillNewCloudWithOldCloud(sCloud, cloudWithSmoothedContour);
+  FindAndFillHoles(sCloud);
+}
+
 
 void make_model(Mesh m, float width)
 {
@@ -109,7 +123,7 @@ void make_model(Mesh m, float width)
       {
         p2 = new PVector(p1.x, p1.y, p1.z-width);
         c2.SetPoint(x,y,p2);
-      } 
+      }
     }
   }
 
@@ -128,12 +142,10 @@ void make_model(Mesh m, float width)
     Point3D p_3 = new Point3D(p2.x, p2.y, 1);
     Point3D p_4 = new Point3D(p1.x, p1.y, 1);
 
-    m.AddPolygon(p_1, p_2, p_3, p_4);
-  }
+    m.AddPolygon(p_1, p_2, p_3, p_4); //<>//
+  } //<>//
 
 }
-
-
 
 void draw()
 {
@@ -145,7 +157,6 @@ void draw()
   pointLight(255, 255, 255, width/2, height/2, 400);
   pointLight(255, 255, 255, width/2, height/2, -400);
 
- 
   //Отображение облака
   if(defaultCloud)
   {
