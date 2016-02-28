@@ -37,13 +37,16 @@ void setup()
 
   //Получем облака
   cloud=new PointCloud("..\\Data\\cloud.OCF");
-  sCloud = cloud.Smooth(20);
-  
-  //Находим контуры
   FindContour(cloud);
+
+  HoleFiller_1 hf = new HoleFiller_1();
+  hf.FindAndFillHoles(cloud);
+
+  sCloud = cloud.Smooth(20); 
   FindContour(sCloud);
 
-  testHoleFiller();
+
+  //testHoleFiller();
 
   //Построение меша
   m = new Mesh(cloud.Width(), cloud.Height());
@@ -98,13 +101,13 @@ void setup()
 }
 
 //Тестирование заполнения отверстий
-void testHoleFiller()
+/*void testHoleFiller()
 {
   //cloudWithSmoothedContour = new PointCloud(sCloud.Width(), sCloud.Height());
   //HoleFiller(sCloud, cloudWithSmoothedContour); //<>//
   //FillNewCloudWithOldCloud(sCloud, cloudWithSmoothedContour);
   FindAndFillHoles(sCloud);
-}
+}*/
 
 
 void make_model(Mesh m, float width)
