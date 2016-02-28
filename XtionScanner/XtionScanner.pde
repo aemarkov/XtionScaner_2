@@ -24,14 +24,16 @@ boolean defaultMesh = false;
 boolean smoothMesh = false;
 
 
+HoleFiller hf;
+
 void setup()
 {
   //General setup
   size(800, 800, P3D);
+  background(0);
 
   //Настройки камеры
   cam = new PeasyCam(this, 800);
-
   cam.setMinimumDistance(0.000);
   cam.setMaximumDistance(5000);
 
@@ -39,8 +41,11 @@ void setup()
   cloud=new PointCloud("..\\Data\\cloud.OCF");
   FindContour(cloud);
 
-  HoleFiller_1 hf = new HoleFiller_1();
-  hf.FindAndFillHoles(cloud);
+  //HoleFiller_1 hf = new HoleFiller_1();
+  //hf.FindAndFillHoles(cloud);
+
+  hf = new HoleFiller();
+  //hf.Fill(cloud);
 
   sCloud = cloud.Smooth(20); 
   FindContour(sCloud);
@@ -100,14 +105,6 @@ void setup()
   make_model(sM, 3);
 }
 
-//Тестирование заполнения отверстий
-/*void testHoleFiller()
-{
-  //cloudWithSmoothedContour = new PointCloud(sCloud.Width(), sCloud.Height());
-  //HoleFiller(sCloud, cloudWithSmoothedContour); //<>//
-  //FillNewCloudWithOldCloud(sCloud, cloudWithSmoothedContour);
-  FindAndFillHoles(sCloud);
-}*/
 
 
 void make_model(Mesh m, float width)
@@ -166,6 +163,7 @@ void draw()
     stroke(255, 100, 100);
     strokeWeight(1);
     drawCloud(cloud);
+    hf.Fill(cloud);
   }
   
   if(smoothCloud)

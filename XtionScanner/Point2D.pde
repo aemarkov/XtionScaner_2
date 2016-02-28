@@ -84,4 +84,28 @@ class Point2D
   {
     return "("+Integer.toString(x)+" "+Integer.toString(y)+")";
   }
+
+  //Сравнение
+  @Override
+  public boolean equals(Object obj)
+  {
+    if(obj == this)
+      return true;
+
+    /* obj ссылается на null */
+
+    if(obj == null)
+      return false;
+
+     /* Удостоверимся, что ссылки имеют тот же самый тип */
+
+    if(!(getClass() == obj.getClass()))
+      return false;
+    else
+    {
+      Point2D tmp = (Point2D)obj;
+      return (tmp.x==this.x)&&(tmp.y==this.y);
+
+    }
+  }
 }
