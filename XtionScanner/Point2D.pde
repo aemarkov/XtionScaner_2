@@ -8,7 +8,7 @@
   направлении
 
  */
-class Point2D
+class Point2D implements Cloneable
 {
   //Координаты
   public int x, y;
@@ -107,5 +107,12 @@ class Point2D
       return (tmp.x==this.x)&&(tmp.y==this.y);
 
     }
+  }
+
+
+  //Копирование
+  public Point2D clone()
+  {
+    return new Point2D(x,y);  
   }
 }

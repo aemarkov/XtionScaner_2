@@ -33,7 +33,7 @@
   Затем, начиная с [DATA] идут точки облака, разделенные точкой с запятой.
   1 строка файла - 1 стррока организованного облака*/
 
-class PointCloud
+class PointCloud implements Cloneable
 {
   //Матрица точек облака
   private PVector[][] point_cloud;
@@ -60,6 +60,21 @@ class PointCloud
     contour = new ArrayList<Point2D>();
   }
 
+
+  //Копирование
+  public PointCloud clone()
+  {
+    PointCloud copy = new PointCloud(w,h);
+    for(int y = 0; y<h; y++)
+      copy.point_cloud[y]=point_cloud[y].clone();
+
+    copy.contour = new ArrayList<Point2D>();
+    for(Point2D point: contour)
+      copy.contour.add(point.clone());
+
+    return copy;
+
+  }
 
   //Создает облако точек из файла
   public PointCloud(String filename)

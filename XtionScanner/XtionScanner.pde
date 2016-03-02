@@ -41,11 +41,8 @@ void setup()
   cloud=new PointCloud("..\\Data\\cloud.OCF");
   FindContour(cloud);
 
-  //HoleFiller_1 hf = new HoleFiller_1();
-  //hf.FindAndFillHoles(cloud);
-
   hf = new HoleFiller();
-  //hf.Fill(cloud);
+  cloud = hf.Fill(cloud);
 
   sCloud = cloud.Smooth(20); 
   FindContour(sCloud);
@@ -163,7 +160,7 @@ void draw()
     stroke(255, 100, 100);
     strokeWeight(1);
     drawCloud(cloud);
-    hf.Fill(cloud);
+    //hf.Fill(cloud);
   }
   
   if(smoothCloud)
