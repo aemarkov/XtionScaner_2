@@ -87,6 +87,8 @@ public class ContourSmoother
 				new_cloud.AddContourPoint(source_cloud.GetContourPoint(i));
 
 
+		println("Done");
+		println("");
 		return new_cloud;
 	}
 
@@ -115,6 +117,113 @@ public class ContourSmoother
 		//Расстояние
 		float dist = cr_pr.mag()/s.mag();
 		return dist;
+	}
+
+
+	/**
+	 * Сглаживает контур методом скользящей медианы
+	 * 
+	 */
+	void SlidingMedianSmooth(PointCloud cloud)
+	{
+		ArrayList<PVector> list=new ArrayList<PVector>();
+		PVector prev=null;
+	  	//Число сглаживаемых точек
+	  	int n=60;
+	  	for (int i=0; i<cloud.ContourSize()/3; i++)
+	  	{
+	    
+	    	Point2D p = cloud.GetContourPointCycle(i);
+	    	list.add(cloud.GetPoint(p));
+
+	    	if (list.size()>n)
+	      		list.remove(0);
+	 
+	    	//Рисуем точки
+	    	if (i>0)
+	    	{
+	      		PVector av = median(list);
+	      		stroke(0,i,0);
+	      		//strokeWeight(8);
+	      		//point(av.x, av.y, av.z);
+
+	      		if(prev!=null)
+	      			line(prev.x, prev.y, prev.z, av.x, av.y, av.z);
+
+	      		prev=av;
+
+	    	}
+	  	}
+	}
+
+	
+	PVector average(ArrayList<PVector> list)
+	{
+		Pair<PVector, PVector> line = new Pair<PVector, PVector>(list.get(0), list.get(list.size()-1));
+		//stroke(random(0,255),random(0,255),random(0,255));
+		//line(line.X.x, line.X.y, line.X.z,line.Y.x, line.Y.y, line.Y.z);
+
+		PVector av = new PVector();
+	  	for (int i=0; i<list.size(); i++)
+	    	av.add(list.get(i));
+
+	  	av.div(list.size());
+	  	return av; 
+	}
+
+
+
+	//Нахождение медианы списка точек
+	PVector median(ArrayList<PVector> list)
+	{
+		Pair<PVector, PVector> line = new Pair<PVector, PVector>(list.get(0), list.get(list.size()-1));
+		//stroke(0,0,255);
+		//stroke(random(0,255),random(0,255),random(0,255));
+		//strokeWeight(0.5);
+		//line(line.X.x, line.X.y, line.X.z,line.Y.x, line.Y.y, line.Y.z);
+
+		/*stroke(0,255,0);
+	    strokeWeight(8);
+	    point(line.Y.x, line.Y.y, line.Y.z);
+
+	    stroke(255,0,0);
+	    strokeWeight(6);
+	    point(line.X.x, line.X.y, line.X.z);*/
+
+		//ОПТИМИЗИРОВАТЬ
+		//https://ru.wikipedia.org/wiki/Алгоритм_выбора
+
+		/* Сортируем точки
+		   В качестве значения мы берем расстояние точки
+		   до прямой, соединящей концы этого наборра точек.
+		   Это что-то вроде меры откланения точки от какого-то
+		   среднего значения
+		*/
+		ArrayList<PVector> copy_l = (ArrayList<PVector>)list.clone();
+
+		Collections.sort(copy_l, new VectorComarator(line));
+	  	PVector a = copy_l.get(copy_l.size()/2);
+	  	return a;
+	}
+
+
+	private class VectorComarator implements Comparator<PVector>
+	{
+		Pair<PVector, PVector> line;
+
+		public VectorComarator(Pair<PVector, PVector> line)
+		{
+			this.line = line;
+		}
+
+		public int compare(PVector a, PVector b)
+		{
+			Float d_a = (Float)distance(a, line);
+			Float d_b = (Float)distance(b, line);
+			if(d_a<d_b)return -1;
+			else if(d_a>d_b)return 1;
+			else return 0;
+		}
 	}
 
 }

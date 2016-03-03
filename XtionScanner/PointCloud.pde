@@ -44,7 +44,7 @@ class PointCloud implements Cloneable
   //Контур
   //Контур не выносится в отдельный класс, т.к он прост (просто список)
   //и не имеет смысла без облака
-  private ArrayList<Point2D> contour;
+  public ArrayList<Point2D> contour;
 
 
   ///////////////////////////////////////////////////////////////////////////////////////

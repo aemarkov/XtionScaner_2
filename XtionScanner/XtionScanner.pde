@@ -25,6 +25,7 @@ boolean smoothMesh = false;
 
 
 HoleFiller hf;
+ContourSmoother sm;
 
 void setup()
 {
@@ -40,16 +41,19 @@ void setup()
   //Получем облака
   cloud=new PointCloud("..\\Data\\cloud.OCF");
   hf = new HoleFiller();
-  cloud = hf.Fill(cloud);
-  cloud = cloud.Smooth(20);
+  sm = new ContourSmoother();  
 
-  //sCloud = cloud.Smooth(20); 
+  cloud = hf.Fill(cloud);
+  //cloud = sm.SimplifyContour(cloud,1);
+  //cloud = cloud.Smooth(20);
+
+  sCloud = cloud.Smooth(20);  
   //FindContour(sCloud);
 
-  ContourSmoother sm = new ContourSmoother();
-  sCloud = sm.SimplifyContour(cloud, 5 );
+ 
+  //sCloud = sm.SimplifyContour(cloud, 5 );
+  //sm.SlidingMedianSmooth(cloud);
 
-  //testHoleFiller();
 
   //Построение меша
   m = new Mesh(cloud.Width(), cloud.Height());
@@ -161,7 +165,10 @@ void draw()
     stroke(255, 100, 100);
     strokeWeight(1);
     drawCloud(cloud);
+
+    stroke(0,255,0);
     //hf.Fill(cloud);
+    sm.SlidingMedianSmooth(cloud);
   }
   
   if(smoothCloud)
@@ -176,14 +183,14 @@ void draw()
   if(defaultContour)
   {
     stroke(255,0,0);
-    //strokeWeight(5);
+    strokeWeight(1);
     drawContour(cloud);
   }
   
   if(smoothContour)
   {
     stroke(0,255,0);
-//strokeWeight(5);
+    strokeWeight(1);
     drawContour(sCloud);
   }
   
