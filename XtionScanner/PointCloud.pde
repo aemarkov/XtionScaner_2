@@ -68,13 +68,30 @@ class PointCloud implements Cloneable
     for(int y = 0; y<h; y++)
       copy.point_cloud[y]=point_cloud[y].clone();
 
-    copy.contour = new ArrayList<Point2D>();
+    this.copy_contour(copy);
+    
+    return copy;
+  }
+
+  private void copy_contour(PointCloud targer)
+  {
+    targer.contour = new ArrayList<Point2D>();
     for(Point2D point: contour)
-      copy.contour.add(point.clone());
+      targer.contour.add(point.clone());
+  }
+
+  //Копирование только облака
+  public PointCloud clone_cloud()
+  {
+    PointCloud copy = new PointCloud(w,h);
+    for(int y = 0; y<h; y++)
+      copy.point_cloud[y]=point_cloud[y].clone();
+
+    copy.contour = new ArrayList<Point2D>();
 
     return copy;
-
   }
+
 
   //Создает облако точек из файла
   public PointCloud(String filename)
@@ -96,15 +113,15 @@ class PointCloud implements Cloneable
       while(((line=r.readLine())!=null) && (!line.equals("[DATA]")))
       {
         //Парсим строку
-        KeyValuePair  pair = parse_line(line);
+        Pair<String,Integer>  pair = parse_line(line);
 
         //Заполняем соотвествующие значения. в зависимости от этой строки
-        if(pair.key.equals("VERSION"))
-          v=pair.value;
-        else if(pair.key.equals("WIDTH"))
-          w=pair.value;
-        if(pair.key.equals("HEIGHT"))
-          h=pair.value;
+        if(pair.X.equals("VERSION"))
+          v=pair.Y;
+        else if(pair.X.equals("WIDTH"))
+          w=pair.Y;
+        if(pair.X.equals("HEIGHT"))
+          h=pair.Y;
       }
 
       //Проверка на то, что все необходимые значения ввеедены
@@ -142,12 +159,16 @@ class PointCloud implements Cloneable
     }catch (IOException exp)
     {
     }
+
+
+    //Создаем контур
+    FindContour(this);
   }
 
-  KeyValuePair parse_line(String line)
+  Pair<String,Integer> parse_line(String line)
   {
     String[] strings = line.split("=");
-    return new KeyValuePair(strings[0], Integer.parseInt(strings[1]));
+    return new Pair<String,Integer>(strings[0], Integer.parseInt(strings[1]));
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////
@@ -231,12 +252,19 @@ class PointCloud implements Cloneable
       }
     }
 
+    cloud.copy_contour(sCloud);
+
     return sCloud;
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////
   ///    ОПЕРАЦИИ НАД КОНТУРОМ
   ///////////////////////////////////////////////////////////////////////////////////////
+
+  public void ClearContour()
+  {
+    contour.clear();
+  }
 
   //Добавляет точку в контур
   public void AddContourPoint(int x, int y)

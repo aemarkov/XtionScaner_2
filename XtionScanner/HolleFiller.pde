@@ -16,7 +16,7 @@ public class HoleFiller
 
 	public PointCloud Fill(PointCloud source_cloud)
 	{
-		//println("Smoothing contour...");
+		println("Filling holes...");
 
 		
 		PointCloud dest_cloud = source_cloud.clone();
@@ -35,7 +35,10 @@ public class HoleFiller
 			find_and_fill_row(source_cloud, dest_cloud, y);
 		
 
+		FindContour(dest_cloud);
 
+		println("Done");
+		println("");
 		return dest_cloud;
 
 	}

@@ -39,14 +39,15 @@ void setup()
 
   //Получем облака
   cloud=new PointCloud("..\\Data\\cloud.OCF");
-  FindContour(cloud);
-
   hf = new HoleFiller();
   cloud = hf.Fill(cloud);
+  cloud = cloud.Smooth(20);
 
-  sCloud = cloud.Smooth(20); 
-  FindContour(sCloud);
+  //sCloud = cloud.Smooth(20); 
+  //FindContour(sCloud);
 
+  ContourSmoother sm = new ContourSmoother();
+  sCloud = sm.SimplifyContour(cloud, 5 );
 
   //testHoleFiller();
 

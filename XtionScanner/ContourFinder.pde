@@ -16,11 +16,14 @@
 
 public void FindContour(PointCloud cloud)
 { 
+  cloud.ClearContour();
+
+
   Point2D curP = new Point2D();                          //Текущая точка 
 
   //Ищем первую существующую точку
   println("Finding contour...");
-  println("Searching for first non-nan point...");
+  //println("Searching for first non-nan point...");
 
   boolean isFound=false;
   for (curP.y = 0; curP.y<cloud.Height() && !isFound; curP.y++)
@@ -57,7 +60,7 @@ public void FindContour(PointCloud cloud)
   curP.Move(direction);
 
   //Движемся вдоль контура
-  println("Moving along the contour...");
+  //println("Moving along the contour...");
   while ((curP.x!=start.x)||(curP.y!=start.y))
   {
     //Выбираем очередную точку и добавляем ее в контур
@@ -70,7 +73,8 @@ public void FindContour(PointCloud cloud)
     direction=findClosestPoint(curP, cloud, direction);
   }
 
-  println("Contour found");
+  println("Done");
+  println("");
 }
 
 //Ищем направление, которое направлено
