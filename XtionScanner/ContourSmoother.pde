@@ -124,7 +124,7 @@ public class ContourSmoother
 	 * Сглаживает контур методом скользящей медианы
 	 * 
 	 */
-	void SlidingMedianSmooth(PointCloud cloud)
+	/*void SlidingMedianSmooth(PointCloud cloud)
 	{
 		ArrayList<PVector> list=new ArrayList<PVector>();
 		PVector prev=null;
@@ -177,18 +177,6 @@ public class ContourSmoother
 	PVector median(ArrayList<PVector> list)
 	{
 		Pair<PVector, PVector> line = new Pair<PVector, PVector>(list.get(0), list.get(list.size()-1));
-		//stroke(0,0,255);
-		//stroke(random(0,255),random(0,255),random(0,255));
-		//strokeWeight(0.5);
-		//line(line.X.x, line.X.y, line.X.z,line.Y.x, line.Y.y, line.Y.z);
-
-		/*stroke(0,255,0);
-	    strokeWeight(8);
-	    point(line.Y.x, line.Y.y, line.Y.z);
-
-	    stroke(255,0,0);
-	    strokeWeight(6);
-	    point(line.X.x, line.X.y, line.X.z);*/
 
 		//ОПТИМИЗИРОВАТЬ
 		//https://ru.wikipedia.org/wiki/Алгоритм_выбора
@@ -199,7 +187,7 @@ public class ContourSmoother
 		   Это что-то вроде меры откланения точки от какого-то
 		   среднего значения
 		*/
-		ArrayList<PVector> copy_l = (ArrayList<PVector>)list.clone();
+	/*	ArrayList<PVector> copy_l = (ArrayList<PVector>)list.clone();
 
 		Collections.sort(copy_l, new VectorComarator(line));
 	  	PVector a = copy_l.get(copy_l.size()/2);
@@ -224,6 +212,6 @@ public class ContourSmoother
 			else if(d_a>d_b)return 1;
 			else return 0;
 		}
-	}
+	}*/
 
 }

@@ -168,7 +168,7 @@ void draw()
 
     stroke(0,255,0);
     //hf.Fill(cloud);
-    sm.SlidingMedianSmooth(cloud);
+    //sm.SlidingMedianSmooth(cloud);
   }
   
   if(smoothCloud)
