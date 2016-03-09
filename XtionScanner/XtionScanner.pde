@@ -39,7 +39,12 @@ void setup()
   cam.setMaximumDistance(5000);
 
   //Получем облака
-  cloud=new PointCloud("..\\Data\\cloud.OCF");
+  OCFReader cloud_reader = new OCFReader();
+  cloud=cloud_reader.OpenCloud("..\\Data\\cloud.OCF");
+  println(cloud);
+
+  FindContour(cloud);
+
   hf = new HoleFiller();
   sm = new ContourSmoother();  
 
