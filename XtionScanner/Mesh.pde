@@ -28,6 +28,8 @@
   нельзя вставить в середину, удалить итп
  */
 
+import java.io.*;
+
 class Mesh
 {
   ArrayList<PointCloud> clouds;    //Список облаков точек
@@ -43,6 +45,56 @@ class Mesh
 
     this.w=w; 
     this.h=h;
+  }
+  
+  // Запись в файл
+  public void toFile(String filename)
+  {
+    // Формируем Хэш точек с индексами
+    // Формируем список строк с вершинами
+    // Формируем список вершин
+    // Записываем оба списка в файл
+    List<String> vertices_strings = new Vector<String>();
+    List<String> polygons_strings = new Vector<String>();
+    
+    Iterator<Polygon> polygon_it = polygons.iterator();
+    int point_index = 1; // Нумерация в obj начинается с 1
+    while (polygon_it.hasNext())
+    {
+      Polygon polygon = polygon_it.next();
+      Point3D[] points = polygon.GetPoints();
+      String polygon_string = new String("f ");
+      String vertice_string = new String("v ");
+      for(int i = 0; i < points.length; i++)
+      {
+        // Заполняем словарь
+        PVector real_point = GetPoint(points[i]);
+        
+        // Составляем списки строк
+        // Потому что стандартный toString() у PVector имеет формат [x y z], надо x y z
+        vertice_string = String.format("v %1$.3f %2$.3f %3$.3f", real_point.x, real_point.y, real_point.z);
+        vertices_strings.add(vertice_string);     
+        polygon_string += point_index + " ";
+        
+        point_index++;
+      }
+      polygons_strings.add(polygon_string);
+    }
+    //print(polygons);
+
+    // Откроем файл
+    PrintWriter out = null;
+    try  {
+      out = new PrintWriter(filename + ".obj");
+    }  
+    catch(FileNotFoundException e)  {
+      System.out.printf("[Error]Can't open file %s to write", filename);
+      throw new RuntimeException(e);
+    }
+    
+    out.println(String.join("\n", vertices_strings));
+    out.print(String.join("\n", polygons_strings));
+    out.close();
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////
@@ -238,5 +290,14 @@ class Polygon
   Point3D[] GetPoints()
   {
     return points;
+  }
+  
+  public String toString()
+  {
+    String str = new String("I am str");
+    for(int i = 0; i < points.length; i++);
+      //str += String.format("%.3f %.3f %.3f", points[i].x, points[i].y, points[i].z);
+    
+    return str;
   }
 }
