@@ -7,211 +7,182 @@ import java.util.*;
  */
 public class ContourSmoother
 {
-	/**
-	 *	Уменьшает количество точек, используя алгоритм Рамера-Дугласа-Пекера
-	 *  https://ru.wikipedia.org/wiki/Алгоритм_Рамера_—_Дугласа_—_Пекера
-	 * 
-	 *  source_cloud - исходное облако
-	 *  epsilon максимальное расстояние от точки до прямой, при котором она еще
-	 *  выбрасывается
-	 */
-	public PointCloud SimplifyContour(PointCloud source_cloud, float epsilon)
+	//Сглаживает контур
+	public void SmoothContour(PointCloud cloud, int count, int step, float eps)
 	{
-		println("Simplifing contour...");
 
-		int points_count =  source_cloud.ContourSize();
+	  	/*
+	    Алгоритм:
+	    1. Сглаживаем контур
+	    2. Фиксим индексы, чтобы форма контура в координатах и в "форма в индексах"
+	       совпадали
 
-		//Стек индексов вершин
-		Stack<Pair<Integer,Integer>> points_stack = new Stack<Pair<Integer,Integer>>();
+	    Вычисление координат по индексам
+	    x = x0 + i*dx
+	    y = y0 + j*dx
 
-		//Массив - сохранять точки или нет
-		boolean[] keep_point = new boolean[points_count];
-		for(int i = 0; i<keep_point.length; i++)
-			keep_point[i]=true;
+	    Вычисление индексов новых точек
+	    i' = (x' - x0)/dx
+	    j' = (y' - y0)/dy 
 
-		//Заносим в стек первую и последнюю точку
-		points_stack.push(new Pair<Integer,Integer>(0, points_count-1));
-		
-		//Выполняем алгоритм
-		while(!points_stack.empty())
-		{
-			//Берем граничные точки очередного разбиения
-			int start_index = points_stack.peek().X;		//A
-			int end_index = points_stack.peek().Y;			//B
-			points_stack.pop();
+	    Видим, что нужны (X0, y0) (dx,dy). Их надо найти ДО(!!!)
+	    сглаживания контура
 
+	    Берем строку и две точки (x1, y-) (x2, y-) в начале и конце
+	      Y-нас не интересует, потому что в строке он изменяется мало
 
-			//Ищем наиболее удаленную от линии AB точку
-			float max_dist = 0;
-			int max_index = start_index;
-			for(int i=start_index+1; i<end_index; i++)
-			{
-				if(keep_point[i])
-				{
-					float d = distance(source_cloud.GetPointFromContour(i), 
-							new Pair<PVector, PVector>(
-								source_cloud.GetPointFromContour(start_index),
-								source_cloud.GetPointFromContour(end_index)));
+	      Решаем систему:
+	      x1 = x0 + i1*dx
+	      x2 = x0 + i2*dx
 
-					//println(d);
-					//println("----");
+	      Решение:
+	      dx = (x2-x1)/(i2-i1)
+	      x0 = x1 - i1*dx
+	      
 
-					if(d>max_dist)
-					{
-						max_dist = d;
-						max_index = i;
-					}
-				}
-			}
+	      Аналогично поступаем с Y: берем две точки по вертикали
+	      y1 = y0 + j1*dy
+	      y2 = y0 + j2*dy
 
-			//Если эта точка (С) откланяется от прямой на расстояние
-			//Больше, чем константа, то разбиваем отрезок AB на AC и CB
-			if(max_dist>epsilon)
-			{
-				points_stack.push(new Pair<Integer, Integer>(start_index, max_index));
-				points_stack.push(new Pair<Integer, Integer>(max_index, end_index));
-			}
-			else
-			{
-				//Все точки между A и B лежат достаточно близко к прямой, чтобы выкинуть их
-				for(int i = start_index+1; i<end_index; i++)
-					keep_point[i]=false;
-			}
+	      dy = (y2-y1)/(j2-j1)
+	      y0 = y1 - j1*dy
 
-		}
+	  	*/
 
-		PointCloud new_cloud = source_cloud.clone_cloud();
+	  	//Находим значения
+	  	float x0, y0, dx, dy;
+	  	PVector sp = cloud.GetPointFromContour(0);
+	  	float x_min=sp.x, x_max=sp.x, y_min=sp.y, y_max=sp.y;
+	  	//x_min=sp.x; x_max=sp.x; y_min=sp.y; y_max=sp.y;
 
-		for(int i = 0; i<points_count; i++)
-			if(keep_point[i])
-				new_cloud.AddContourPoint(source_cloud.GetContourPoint(i));
+	  	int i_min=0, i_max=0, j_min = 0, j_max=0;
 
-
-		println("Done");
-		println("");
-		return new_cloud;
-	}
-
-
-	//Расстояние от точки до прямой в пространстве
-	private float distance(PVector point, Pair<PVector,PVector> line)
-	{
-		/*
-			Расстояние от точки до прямой в 3д:
-			d = |M0M1 x s|/|s|
-			M0 - точка
-			M1 - некая точка на прямой
-			s - направляющий вектор прямой
-		*/
-
-
-		PVector s = PVector.sub(line.Y, line.X);
-		//println("s",s);
-
-		PVector m0m1 = PVector.sub(line.X, point);
-		//println("m0m1", m0m1);
-
-		//Векторное произведение
-		PVector cr_pr = m0m1.cross(s);		
-
-		//Расстояние
-		float dist = cr_pr.mag()/s.mag();
-		return dist;
-	}
-
-
-	/**
-	 * Сглаживает контур методом скользящей медианы
-	 * 
-	 */
-	/*void SlidingMedianSmooth(PointCloud cloud)
-	{
-		ArrayList<PVector> list=new ArrayList<PVector>();
-		PVector prev=null;
-	  	//Число сглаживаемых точек
-	  	int n=60;
-	  	for (int i=0; i<cloud.ContourSize()/3; i++)
+	  	//Просто ищем минимальное и максимальное значение
+	  	for(int i = 0; i<cloud.ContourSize(); i++)
 	  	{
-	    
-	    	Point2D p = cloud.GetContourPointCycle(i);
-	    	list.add(cloud.GetPoint(p));
+	    	PVector p = cloud.GetPointFromContour(i);
+	    	Point2D pc = cloud.GetContourPoint(i);
 
-	    	if (list.size()>n)
-	      		list.remove(0);
-	 
-	    	//Рисуем точки
-	    	if (i>0)
+	    	//X
+	    	if(p.x<x_min)
 	    	{
-	      		PVector av = median(list);
-	      		stroke(0,i,0);
-	      		//strokeWeight(8);
-	      		//point(av.x, av.y, av.z);
-
-	      		if(prev!=null)
-	      			line(prev.x, prev.y, prev.z, av.x, av.y, av.z);
-
-	      		prev=av;
-
+	     		x_min=p.x;
+	    		i_min=pc.x;
 	    	}
+	   	 	else if(p.x>x_max)
+	    	{
+	      		x_max=p.x;
+	      		i_max=pc.x;
+	    	}
+
+	    	//Y
+	    	if(p.y<y_min)
+	    	{
+	      		y_min=p.y;
+	      		j_min=pc.y;
+	    	}
+	    	else if(p.y>y_max)
+	    	{
+	      		y_max=p.y;
+	      		j_max=pc.y;
+	    	}
+
 	  	}
-	}
-
-	
-	PVector average(ArrayList<PVector> list)
-	{
-		Pair<PVector, PVector> line = new Pair<PVector, PVector>(list.get(0), list.get(list.size()-1));
-		//stroke(random(0,255),random(0,255),random(0,255));
-		//line(line.X.x, line.X.y, line.X.z,line.Y.x, line.Y.y, line.Y.z);
-
-		PVector av = new PVector();
-	  	for (int i=0; i<list.size(); i++)
-	    	av.add(list.get(i));
-
-	  	av.div(list.size());
-	  	return av; 
-	}
 
 
+		//Расчет этих параметров
+	  	dx=(x_max-x_min)/(i_max-i_min);
+	  	x0=x_min - dx*i_min;
 
-	//Нахождение медианы списка точек
-	PVector median(ArrayList<PVector> list)
-	{
-		Pair<PVector, PVector> line = new Pair<PVector, PVector>(list.get(0), list.get(list.size()-1));
+	  	dy=(y_max-y_min)/(j_max-j_min);
+	  	y0=y_min - dy*j_min;
 
-		//ОПТИМИЗИРОВАТЬ
-		//https://ru.wikipedia.org/wiki/Алгоритм_выбора
+	  	println(x0, ' ', y0, "; ", dx, ' ',dy);
 
-		/* Сортируем точки
-		   В качестве значения мы берем расстояние точки
-		   до прямой, соединящей концы этого наборра точек.
-		   Это что-то вроде меры откланения точки от какого-то
-		   среднего значения
-		*/
-	/*	ArrayList<PVector> copy_l = (ArrayList<PVector>)list.clone();
+	  	//Сглаживаем контур
+	  	//Копия контура
+	  	ArrayList<PVector> copy_contour = new ArrayList<PVector>();
+	  	for(int i = 0; i<cloud.ContourSize(); i++)
+	    	copy_contour.add(cloud.GetPointFromContour(i).copy());
 
-		Collections.sort(copy_l, new VectorComarator(line));
-	  	PVector a = copy_l.get(copy_l.size()/2);
-	  	return a;
+
+
+		for(int i = 0; i<count; i++)
+	  		smooth_contour(copy_contour, step, eps);
+
+	  	//Фиксим индексы контура
+	  	repairContour(cloud, copy_contour, new PVector(x0,y0), new PVector(dx, dy));
 	}
 
 
-	private class VectorComarator implements Comparator<PVector>
+	// Step - какая разница в индексах будет между усредняемыми точками
+	// Суть алгоритма: берутся две точки, координаты второй из них приравниваются среднему этих 2-ух,
+	// если они далеко друг от друга
+	void smooth_contour(List<PVector> contour, int step, float eps)
 	{
-		Pair<PVector, PVector> line;
+	  PVector a, b;             // Текущая и следующая точка
+	  for (int i = 0; i <= contour.size(); i++)
+	  {
+	    a = get_point_cycle(contour, i);
+	    b = get_point_cycle(contour, i+step);
 
-		public VectorComarator(Pair<PVector, PVector> line)
-		{
-			this.line = line;
-		}
+	    if (PVector.dist(a, b) > eps)
+	    {
+	      b = new PVector((a.x+b.x)/2, (a.y+b.y)/2, (a.z+b.z)/2);
+	      set_point_cycle(contour, i, b);
+	    }
+	  }
+	}
 
-		public int compare(PVector a, PVector b)
-		{
-			Float d_a = (Float)distance(a, line);
-			Float d_b = (Float)distance(b, line);
-			if(d_a<d_b)return -1;
-			else if(d_a>d_b)return 1;
-			else return 0;
-		}
-	}*/
 
+
+	//Делает из сглаженных точек контур
+	void repairContour(PointCloud cloud, List<PVector> contour, PVector center, PVector step)
+	{
+
+	  //ArrayList<Point2D> new_contour=new ArrayList<Point2D>();
+	  cloud.ClearContour();
+
+	  //Проходим по сглаженному контуру и генерим индексы
+	  for(int i=0; i<contour.size(); i++)
+	  { 
+	    /*
+	        Вычисление индексов новых точек
+	      i' = (x' - x0)/dx
+	      j' = (y' - y0)/dy 
+	    */
+
+	    PVector point = contour.get(i);
+	    int _i = (int)((point.x - center.x)/step.x);
+	    int _j = (int)((point.y - center.y)/step.y);
+
+	    cloud.SetPoint(_i, _j, point);
+	    cloud.AddContourPoint(_i, _j);
+	  }
+	}
+
+
+
+	//Возвращет точку, словно контур замкнут
+	PVector get_point_cycle(List<PVector> contour, int index)
+	{
+	  
+	  return contour.get(get_cycle_index(contour, index));
+	}
+
+	//Задает точку, словно контур замкнут
+	void set_point_cycle(List<PVector> contour, int index, PVector value)
+	{
+	  contour.set(get_cycle_index(contour, index),value);
+	}
+
+	//Возвращает индекс точки, для перевода из замкнутого в обычный
+	int get_cycle_index(List<PVector> contour, int index)
+	{
+	  if (index<0)
+	   index=contour.size()+index;
+	  else if (index>=contour.size())
+	    index=index-contour.size();
+	  return index;
+	}
 }
