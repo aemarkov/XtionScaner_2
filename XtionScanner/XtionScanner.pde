@@ -35,15 +35,18 @@ void setup()
   cloud=cloud_reader.OpenCloud("..\\Data\\cloud.OCF");
   FindContour(cloud);
 
-  HoleFiller hf;
-  ContourSmoother sm;
-  hf = new HoleFiller();          //Заполнятель дырок
-  sm = new ContourSmoother();     //Сглаживатель контура
+  CloudClearer cc = new CloudClearer();           //Обрезатель контура
+  HoleFiller hf = new HoleFiller();               //Заполнятель дырок
+  ContourSmoother sm = new ContourSmoother();     //Сглаживатель контура
 
+  cloud = cc.CutCloud(cloud);
+  cloud = hf.Fill(cloud);                     //Заполняем
+  sm.SmoothContour(cloud, 10, 8, 0.3);        //Сглаживаем контур
+  cloud = cc.CutCloud(cloud);
+  //cloud = hf.Fill(cloud);                     //Заполняем
+  //
 
-  cloud = hf.Fill(cloud);         //Заполняем
-  sm.SmoothContour(cloud, 8, 8, 0.3);
-  cloud = hf.Fill(cloud);
+  //cloud = hf.Fill(cloud); 
 
   cloud = cloud.Smooth(20);  
 

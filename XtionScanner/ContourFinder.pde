@@ -65,6 +65,7 @@ public void FindContour(PointCloud cloud)
   {
     //Выбираем очередную точку и добавляем ее в контур
     PVector v1 = cloud.GetPoint(curP.x, curP.y);
+
     if (v1!=null)
       cloud.AddContourPoint(new Point2D(curP));
 
@@ -116,3 +117,5 @@ boolean isPoint(Point2D curP, PointCloud cloud, Direction direction)
   PVector f = cloud.GetPoint(p.x, p.y);
   return cloud.GetPoint(p.x, p.y)!=null;
 }
+
+
