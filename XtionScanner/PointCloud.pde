@@ -44,7 +44,12 @@ class PointCloud implements Cloneable
   //Контур
   //Контур не выносится в отдельный класс, т.к он прост (просто список)
   //и не имеет смысла без облака
+  //Используется, когда нужен обход вокруг контура
   public ArrayList<Point2D> contour;
+
+  //Второй вариант контура, используется рядом алгоритмов для
+  //упрощения и оптимизации. Хранит значение - есть ли контур в этой точке.
+  public boolean[][] is_contour;
 
 
   ///////////////////////////////////////////////////////////////////////////////////////
@@ -58,6 +63,7 @@ class PointCloud implements Cloneable
     this.h = h;
     point_cloud = new PVector[h][w];
     contour = new ArrayList<Point2D>();
+    is_contour = new boolean[h][w];
   }
 
 
@@ -73,11 +79,17 @@ class PointCloud implements Cloneable
     return copy;
   }
 
-  private void copy_contour(PointCloud targer)
+  //Копирует контур
+  private void copy_contour(PointCloud target)
   {
-    targer.contour = new ArrayList<Point2D>();
+    target.contour = new ArrayList<Point2D>();
+    target.is_contour = new boolean[h][w];
+
     for(Point2D point: contour)
-      targer.contour.add(point.clone());
+      target.contour.add(point.clone());
+
+    for(int y =0; y<h; y++)
+      target.is_contour[y]=is_contour[y].clone();
   }
 
   //Копирование только облака
@@ -88,6 +100,7 @@ class PointCloud implements Cloneable
       copy.point_cloud[y]=point_cloud[y].clone();
 
     copy.contour = new ArrayList<Point2D>();
+    copy.is_contour = new boolean[h][w];
 
     return copy;
   }
@@ -186,21 +199,28 @@ class PointCloud implements Cloneable
   public void ClearContour()
   {
     contour.clear();
+
+    for(int y = 0; y<h; y++)
+      for(int x = 0; x<w; x++)
+        is_contour[y][x]=false;
   }
 
   //Добавляет точку в контур
   public void AddContourPoint(int x, int y)
   {
     contour.add(new Point2D(x, y));
+    is_contour[y][x]=true;
   }
 
   public void AddContourPoint(Point2D p)
   {
-    contour.add(p);
+    //contour.add(p);
+    AddContourPoint(p.x, p.y);
   }
 
   //Возвращает размер контура
-  public int ContourSize() {
+  public int ContourSize()
+  {
     return contour.size();
   }
 
@@ -233,6 +253,20 @@ class PointCloud implements Cloneable
     return contour.get(index);
   }
 
+
+  //Возвращает, является ли точка контуром или нет
+  public boolean IsContour(int x, int y)
+  {
+    return is_contour[y][x];
+  }
+
+  public boolean IsContour(Point2D p)
+  {
+    return IsContour(p.x, p.y);
+  }
+
+  //[ГОВНОКОД] Возвращает весь контур, нахуй, используется в каком-то методе
+  //УБРАТЬ НАХУЙ
   public ArrayList<Point2D> GetContour()
   {
     return new ArrayList<Point2D>(contour);

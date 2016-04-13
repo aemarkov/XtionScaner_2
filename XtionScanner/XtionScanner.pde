@@ -39,8 +39,8 @@ void setup()
   HoleFiller hf = new HoleFiller();               //Заполнятель дырок
   ContourSmoother sm = new ContourSmoother();     //Сглаживатель контура
 
-  //cloud = cc.CutCloud(cloud);
-  //cloud = hf.Fill(cloud);                     //Заполняем
+  cloud = cc.CutCloud(cloud);
+  cloud = hf.Fill(cloud);                     //Заполняем
   //sm.SmoothContour(cloud, 10, 8, 0.3);        //Сглаживаем контур
   //cloud = cc.CutCloud(cloud);
   //cloud = hf.Fill(cloud);                     //Заполняем
@@ -55,6 +55,7 @@ void setup()
   m = new Mesh(cloud.Width(), cloud.Height());
   m.AddLayer(cloud);
   
+  make_model(m, 3);
   
   //Создание кнопок
   cp5 = new ControlP5(this);
@@ -79,7 +80,7 @@ void setup()
      
   cp5.setAutoDraw(false);
   
-  //make_model(sM, 3);
+
 }
 
 

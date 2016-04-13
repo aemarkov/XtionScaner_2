@@ -4,15 +4,6 @@
  */
 public class CloudClearer
 {
-	/*PointCloud source_cloud;
-	HashMap<int, Pair<int,int>> contour_borders;
-
-
-	CloudClearer(PointCloud cloud)
-	{
-		source_cloud = cloud;
-		contour_borders = new HashMap<int, Pair<int, int>>();
-	}*/
 
 	PointCloud CutCloud(PointCloud source_cloud)
 	{
@@ -21,6 +12,27 @@ public class CloudClearer
 		//PointCloud destination = new PointCloud(source_cloud.Width(), source_cloud.Height());
 
 		//Поиск наименьшей и наибольшей точки
+		int h = source_cloud.Height();
+		int w = source_cloud.Width();
+		
+		boolean is_in_contour;
+
+		for(int y = 0; y<h; y++)
+		{
+			is_in_contour = false;
+			for(int x=0; x<w; x++)
+			{
+				if(!is_in_contour && source_cloud.IsContour(x,y))
+					is_in_contour = true;
+				else if(is_in_contour && source_cloud.IsContour(x,y))
+					is_in_contour = false;
+
+				if(!is_in_contour)
+					source_cloud.SetPoint(x,y, null);
+			}
+		}		
+
+		/*
 		PVector sp = source_cloud.GetPointFromContour(0);
 		float y_min=sp.y, y_max=sp.y;
 		int j_min=0, j_max=0;
@@ -48,43 +60,19 @@ public class CloudClearer
 		for(int j = j_max; j<=j_min; j++)
 		{
 			Pair<Integer, Integer> borders = find_borders(source_cloud, j);
-			/*for(int i = 0; i<borders.X-1; i++)
+			for(int i = 0; i<borders.X-1; i++)
 				source_cloud.SetPoint(i, j, null);
 
 			for(int i = borders.Y+1; i<cloud.Width(); i++)
-				source_cloud.SetPoint(i, j, null);*/
+				source_cloud.SetPoint(i, j, null);
 
-			/*{
-				PVector p = source_cloud.GetPoint(i,j);
-				destination.SetPoint(i,j,p);
-			}*/
-		}
-
-
-		//Копируем старый контур
-		//FindContour(destination);
+		}*/
 
 		println("Done...");
 		println("");
 		return source_cloud;
 
 	}
-
-	//Проверяет, находится ли точка внутри контура (по оси Х)
-	/*private boolean is_in_contour(PointCloud cloud, Point2D point)
-	{
-		Pair<int, int> borders;
-		if(contour_borders.containsKey(point.y))
-			borders = contour_borders.get(point.y);
-		else
-		{
-			borders = find_borders(cloud, p.y);
-			contour_borders.add(p.y, borders);
-		}
-
-		int x = point.x;
-		return (x>=borders.X)&&(x<=borders.Y);
-	}*/
 
 	//Находит Х, У границы контура по заданному Y
 	private Pair<Integer, Integer> find_borders(PointCloud cloud, int y)
