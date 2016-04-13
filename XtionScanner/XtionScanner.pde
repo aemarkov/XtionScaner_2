@@ -39,10 +39,10 @@ void setup()
   HoleFiller hf = new HoleFiller();               //Заполнятель дырок
   ContourSmoother sm = new ContourSmoother();     //Сглаживатель контура
 
-  cloud = cc.CutCloud(cloud);
-  cloud = hf.Fill(cloud);                     //Заполняем
-  sm.SmoothContour(cloud, 10, 8, 0.3);        //Сглаживаем контур
-  cloud = cc.CutCloud(cloud);
+  //cloud = cc.CutCloud(cloud);
+  //cloud = hf.Fill(cloud);                     //Заполняем
+  //sm.SmoothContour(cloud, 10, 8, 0.3);        //Сглаживаем контур
+  //cloud = cc.CutCloud(cloud);
   //cloud = hf.Fill(cloud);                     //Заполняем
   //
 
@@ -58,7 +58,7 @@ void setup()
   
   //Создание кнопок
   cp5 = new ControlP5(this);
-  cp5.addToggle("DrawCloud")
+  cp5.addToggle("DrawCloud") 
      .setPosition(10,10)
      .setSize(50,20)
      .setValue(true)
@@ -124,15 +124,15 @@ void make_model(Mesh m, float width)
     Point3D p_3 = new Point3D(p2.x, p2.y, 1);
     Point3D p_4 = new Point3D(p1.x, p1.y, 1);
 
-    m.AddPolygon(p_1, p_2, p_3, p_4); //<>//
-  } //<>//
+    m.AddPolygon(p_1, p_2, p_3, p_4); //<>// //<>//
+  } //<>// //<>//
 
 }
 
 void draw()
 {
-  //canea and light setup //<>//
-  background(0); //<>//
+  //canea and light setup //<>// //<>//
+  background(0); //<>// //<>//
   pushMatrix();
   
   scale(3, 3, 3);

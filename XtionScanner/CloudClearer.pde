@@ -48,11 +48,11 @@ public class CloudClearer
 		for(int j = j_max; j<=j_min; j++)
 		{
 			Pair<Integer, Integer> borders = find_borders(source_cloud, j);
-			for(int i = 0; i<borders.X-1; i++)
+			/*for(int i = 0; i<borders.X-1; i++)
 				source_cloud.SetPoint(i, j, null);
 
 			for(int i = borders.Y+1; i<cloud.Width(); i++)
-				source_cloud.SetPoint(i, j, null);
+				source_cloud.SetPoint(i, j, null);*/
 
 			/*{
 				PVector p = source_cloud.GetPoint(i,j);
