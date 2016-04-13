@@ -40,10 +40,10 @@ void setup()
   ContourSmoother sm = new ContourSmoother();     //Сглаживатель контура
 
   cloud = cc.CutCloud(cloud);
-  cloud = hf.Fill(cloud);                     //Заполняем
-  //sm.SmoothContour(cloud, 10, 8, 0.3);        //Сглаживаем контур
-  //cloud = cc.CutCloud(cloud);
-  //cloud = hf.Fill(cloud);                     //Заполняем
+  cloud = hf.Fill(cloud);                         //Заполняем
+  sm.SmoothContour(cloud, 10, 8, 0.3);            //Сглаживаем контур
+  cloud = cc.CutCloud(cloud);
+  cloud = hf.Fill(cloud);                       //Заполняем
   //
 
   //cloud = hf.Fill(cloud); 

@@ -23,7 +23,14 @@ void drawCloud(PointCloud cloud)
     {
       PVector p = cloud.GetPoint(x, y);
       if (p!=null)
+      {
+        if(cloud.IsContour(x,y))
+          stroke(0,0,255);
+        else
+          stroke(255,0,0);
+        
         point(p.x, p.y, p.z);
+      }
     }
   }
 }

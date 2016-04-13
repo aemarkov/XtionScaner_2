@@ -9,30 +9,6 @@ public class CloudClearer
 	{
 		println("Cutting cloud...");
 
-		//PointCloud destination = new PointCloud(source_cloud.Width(), source_cloud.Height());
-
-		//Поиск наименьшей и наибольшей точки
-		int h = source_cloud.Height();
-		int w = source_cloud.Width();
-		
-		boolean is_in_contour;
-
-		for(int y = 0; y<h; y++)
-		{
-			is_in_contour = false;
-			for(int x=0; x<w; x++)
-			{
-				if(!is_in_contour && source_cloud.IsContour(x,y))
-					is_in_contour = true;
-				else if(is_in_contour && source_cloud.IsContour(x,y))
-					is_in_contour = false;
-
-				if(!is_in_contour)
-					source_cloud.SetPoint(x,y, null);
-			}
-		}		
-
-		/*
 		PVector sp = source_cloud.GetPointFromContour(0);
 		float y_min=sp.y, y_max=sp.y;
 		int j_min=0, j_max=0;
@@ -54,7 +30,98 @@ public class CloudClearer
 			}
 		}
 
-		stroke(0,255,0);
+
+		//Шаг точке по Y
+		float dy = (y_max-y_min)/(j_max-j_min);
+
+		//Иногда багает, надо точно сделать, что max>min
+		if(j_min>j_max)
+		{
+			int tmp =j_max;
+			j_max = j_min;
+			j_min = tmp;
+		}
+
+
+		//Поиск наименьшей и наибольшей точки
+		int h = source_cloud.Height();
+		int w = source_cloud.Width();
+		
+		
+		int removed;
+		int contour_begin;
+
+		for(int y = 0; y<h; y++)
+		{
+			contour_begin = -1;
+			removed = 0;
+			for(int x=0; x<w; x++)
+			{
+				if(source_cloud.IsContour(x,y))
+				{
+					contour_begin = x;
+					break;
+				}
+				
+				source_cloud.SetPoint(x,y, null);
+				removed++;
+			}
+	
+			if(contour_begin==-1)
+				contour_begin=w;
+			//println(y, " ", removed);
+
+			for(int x = w-1; x>contour_begin; x--)
+			{
+				if(source_cloud.IsContour(x,y))
+					break;
+				
+				source_cloud.SetPoint(x,y, null);
+				removed++;
+			}
+
+			//PSHE-MAGIC
+			//Если мы в контуре, но удалил все точки - значит дыра
+			//ЗАполним ее, опираясь на данные вышестоящей линии
+			if((removed==w-1)&&(y>=j_min) && (y<=j_max))
+			{
+				contour_begin = -1;
+				int contour_end = 0;
+
+				for(int k=0; k<w; k++)
+					if(source_cloud.IsContour(k,y-1))
+					{
+						contour_begin = k;
+						println(source_cloud.GetPoint(k, y-1)==null);
+						break;
+					}
+
+				for(int k=w-1; k>contour_begin; k--)
+					if(source_cloud.IsContour(k,y-1))
+					{
+						contour_end = k;
+						println(source_cloud.GetPoint(k, y-1)==null);
+						break;
+					}
+
+				for(int k = contour_begin; k<=contour_end; k++)
+				{
+					PVector p = source_cloud.GetPoint(k,y-1);
+					if(p==null)continue;
+
+					source_cloud.SetPoint(k, y, new PVector(p.x, p.y+dy, p.z));
+				}
+
+				println(removed);
+			}
+
+			//println(y, " ", j_min, " ",j_max);
+
+		}		
+
+
+
+		/*stroke(0,255,0);
 
 		//Проходим по всем точкам и добавляем только те, что в контуре
 		for(int j = j_max; j<=j_min; j++)

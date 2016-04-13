@@ -108,7 +108,8 @@ public class ContourSmoother
 
 
 		for(int i = 0; i<count; i++)
-	  		smooth_contour(copy_contour, step, eps);
+	  		alex_smooth_contour(copy_contour, step, eps);
+	  	//simple_smooth(copy_contour);
 
 	  	//Фиксим индексы контура
 	  	repairContour(cloud, copy_contour, new PVector(x0,y0), new PVector(dx, dy));
@@ -118,7 +119,7 @@ public class ContourSmoother
 	// Step - какая разница в индексах будет между усредняемыми точками
 	// Суть алгоритма: берутся две точки, координаты второй из них приравниваются среднему этих 2-ух,
 	// если они далеко друг от друга
-	void smooth_contour(List<PVector> contour, int step, float eps)
+	void alex_smooth_contour(List<PVector> contour, int step, float eps)
 	{
 	  PVector a, b;             // Текущая и следующая точка
 	  for (int i = 0; i <= contour.size(); i++)
@@ -135,6 +136,41 @@ public class ContourSmoother
 	}
 
 
+	void simple_smooth(List<PVector> contour)
+	{
+		//Averaging list
+		ArrayList<PVector> list=new ArrayList<PVector>();
+		int n=50;  //number of averaging points
+
+		for (int i=-n; i<contour.size(); i++)
+		{
+			//Add point to the list
+			//Keep number of points is N
+			PVector p = get_point_cycle(contour, i);
+			list.add(p);
+			if (list.size()>n)
+			list.remove(0);
+		 
+			//Drawing points
+			if (i>0)
+			{
+				PVector av = average(list);
+				//point(av.x, av.y, av.z);
+				contour.set(i,av);
+			}
+		}
+	}
+
+	//Average list of coordinates
+	PVector average(ArrayList<PVector> list)
+	{
+		PVector av = new PVector();
+	  	for (int i=0; i<list.size(); i++)
+	    	av.add(list.get(i));
+
+	  	av.div(list.size());
+	  	return av;
+	}
 
 	//Делает из сглаженных точек контур
 	void repairContour(PointCloud cloud, List<PVector> contour, PVector center, PVector step)
@@ -157,16 +193,37 @@ public class ContourSmoother
 	    int _j = (int)((point.y - center.y)/step.y);
 
 	    cloud.SetPoint(_i, _j, point);
+
+	    /*print(_i, " ", _j);
+	    if(is_in_contour(cloud, _i, _j))
+	    {
+	    	//_i++;
+	    	_j++;
+	    	if(is_in_contour(cloud, _j, _j))
+	    		println(" already in contour");
+	    	else println();
+	    }*/
+
 	    cloud.AddContourPoint(_i, _j);
 	  }
 	}
 
+	boolean is_in_contour(PointCloud cloud, int x, int y)
+	{
+		for(int i = 0; i<cloud.ContourSize(); i++)
+		{
+			Point2D p = cloud.GetContourPoint(i);;
+			if(p.x==x && p.y==y)
+				return true;
+		}
+
+		return false;
+	}
 
 
 	//Возвращет точку, словно контур замкнут
 	PVector get_point_cycle(List<PVector> contour, int index)
 	{
-	  
 	  return contour.get(get_cycle_index(contour, index));
 	}
 
