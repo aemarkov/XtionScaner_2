@@ -39,47 +39,43 @@ void setup()
   HoleFiller hf = new HoleFiller();               //Заполнятель дырок
   ContourSmoother sm = new ContourSmoother();     //Сглаживатель контура
 
-  cloud = cc.CutCloud(cloud);
+  cloud = cc.CutCloud(cloud);                     //Обрезает контур
   cloud = hf.Fill(cloud);                         //Заполняем
   sm.SmoothContour(cloud, 10, 8, 0.3);            //Сглаживаем контур
-  cloud = cc.CutCloud(cloud);
-  cloud = hf.Fill(cloud);                       //Заполняем
-  //
+  cloud = cc.CutCloud(cloud);                     //Обрезаем по сглаженному, отсекая лишние бугры
+  cloud = hf.Fill(cloud);                         //Заполняем неровности контура
 
-  //cloud = hf.Fill(cloud); 
-
-  cloud = cloud.Smooth(20);  
-
+  cloud = cloud.Smooth(20);                      //Сглаживание "поверхности"
 
   //Построение меша
   m = new Mesh(cloud.Width(), cloud.Height());
   m.AddLayer(cloud);
-  
+
   make_model(m, 3);
-  
+
   //Создание кнопок
   cp5 = new ControlP5(this);
-  cp5.addToggle("DrawCloud") 
+  cp5.addToggle("DrawCloud")
      .setPosition(10,10)
      .setSize(50,20)
      .setValue(true)
      .setMode(ControlP5.SWITCH);
-     
+
    cp5.addToggle("DrawContour")
      .setPosition(10,50)
      .setSize(50,20)
      .setValue(false)
      .setMode(ControlP5.SWITCH);
-   
+
    cp5.addToggle("DrawMesh")
      .setPosition(10,90)
      .setSize(50,20)
      .setValue(false)
      .setMode(ControlP5.SWITCH);
-     
-     
+
+
   cp5.setAutoDraw(false);
-  
+
 
 }
 
@@ -135,7 +131,7 @@ void draw()
   //canea and light setup //<>// //<>//
   background(0); //<>// //<>//
   pushMatrix();
-  
+
   scale(3, 3, 3);
   pointLight(255, 255, 255, width/2, height/2, 400);
   pointLight(255, 255, 255, width/2, height/2, -400);
@@ -148,8 +144,8 @@ void draw()
     drawCloud(cloud);
     stroke(0,255,0);
   }
-  
-  
+
+
   //Отображение контура
   if(draw_contour)
   {
@@ -157,16 +153,16 @@ void draw()
     strokeWeight(0.1);
     drawContour(cloud);
   }
-  
-  
+
+
   if(draw_mesh)
   {
      //Отображение меша
       noStroke();
       m.Draw();
   }
-  
-  
+
+
   popMatrix();
   gui();
 }

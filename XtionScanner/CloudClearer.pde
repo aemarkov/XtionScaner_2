@@ -13,6 +13,7 @@ public class CloudClearer
 		float y_min=sp.y, y_max=sp.y;
 		int j_min=0, j_max=0;
 
+		//Поиск минимальной	и максимальной по Y точек
 		for(int i = 0; i<source_cloud.ContourSize(); i++)
 		{
 			PVector p = source_cloud.GetPointFromContour(i);
@@ -26,12 +27,12 @@ public class CloudClearer
 			else if(p.y>y_max)
 			{
 				y_max = p.y;
-				j_max = pc.y;	
+				j_max = pc.y;
 			}
 		}
 
 
-		//Шаг точке по Y
+		//Шаг точке по Y - расстояние между граничными точками / разницу индексов граничных точек
 		float dy = (y_max-y_min)/(j_max-j_min);
 
 		//Иногда багает, надо точно сделать, что max>min
@@ -42,12 +43,11 @@ public class CloudClearer
 			j_min = tmp;
 		}
 
-
 		//Поиск наименьшей и наибольшей точки
 		int h = source_cloud.Height();
 		int w = source_cloud.Width();
-		
-		
+
+
 		int removed;
 		int contour_begin;
 
@@ -62,11 +62,11 @@ public class CloudClearer
 					contour_begin = x;
 					break;
 				}
-				
+
 				source_cloud.SetPoint(x,y, null);
 				removed++;
 			}
-	
+
 			if(contour_begin==-1)
 				contour_begin=w;
 			//println(y, " ", removed);
@@ -75,7 +75,7 @@ public class CloudClearer
 			{
 				if(source_cloud.IsContour(x,y))
 					break;
-				
+
 				source_cloud.SetPoint(x,y, null);
 				removed++;
 			}
@@ -117,23 +117,8 @@ public class CloudClearer
 
 			//println(y, " ", j_min, " ",j_max);
 
-		}		
+		}
 
-
-
-		/*stroke(0,255,0);
-
-		//Проходим по всем точкам и добавляем только те, что в контуре
-		for(int j = j_max; j<=j_min; j++)
-		{
-			Pair<Integer, Integer> borders = find_borders(source_cloud, j);
-			for(int i = 0; i<borders.X-1; i++)
-				source_cloud.SetPoint(i, j, null);
-
-			for(int i = borders.Y+1; i<cloud.Width(); i++)
-				source_cloud.SetPoint(i, j, null);
-
-		}*/
 
 		println("Done...");
 		println("");
@@ -161,7 +146,7 @@ public class CloudClearer
 			else if((p.x>x_max) && (pc.y==y))
 			{
 				x_max = p.x;
-				i_max = pc.x;	
+				i_max = pc.x;
 			}
 		}
 
